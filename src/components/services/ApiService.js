@@ -22,7 +22,7 @@ export const getAllRates = async (pageNum) => {
 
 export const getPartnerProgramsById = async (destinationProgramId) => {
     try {
-      const url = buildURLWithParams(BASE_API_URL + `partners/search/${destinationProgramId}`, {})
+      const url = buildURLWithParams(BASE_API_URL + `partners/${destinationProgramId}`, {})
         const response = await fetch(url);
         if(!response.ok) {
             throw new Error('Request failed!');

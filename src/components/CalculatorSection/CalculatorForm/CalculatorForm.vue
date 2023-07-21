@@ -1,7 +1,9 @@
 <template>
   <form>
+    <label for="sourceProgram">Transfer my...</label>
     <select
-      :value="selectedProgram"
+      id="sourceProgram"
+      :v-model="selectedProgram"
       @input="
         $emit('selectionChanged', {
           name: $event.target.value,
@@ -18,8 +20,10 @@
         {{ program.name }}
       </option>
     </select>
+    <label for="destinationProgram">to...</label>
     <select
-      :value="destinationProgram"
+      id="destinationProgram"
+      :v-model="destinationProgram"
       @input="
         $emit('destinationProgramSelected', {
           name: $event.target.value,
@@ -77,7 +81,7 @@ export default {
       type: Array,
       required: false,
       default: null,
-    }
+    },
   },
   data() {
     return {
@@ -107,4 +111,14 @@ export default {
 </script>
 
 <style scoped>
+form {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  margin: 20px0 auto;
+  width: 100%;
+}
+label {
+  margin: 0px 10px 0px 30px;
+}
 </style>

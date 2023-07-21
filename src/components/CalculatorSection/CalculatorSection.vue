@@ -1,10 +1,17 @@
 <template>
   <section>
-    <Calculator :apiData="apiData" :selectedProgram="selectedProgram" />
+    <Calculator
+      :apiData="apiData"
+      :selectedProgram="selectedProgram"
+      :destinationProgram="destinationProgram ? destinationProgram.name : null"
+      :transferDetails="transferDetails"
+    />
     <CalculatorForm
       :apiData="apiData"
       :partnerPrograms="partnerPrograms"
+      :transferDetails="transferDetails"
       @selectionChanged="handleSelectionChanged"
+      @destinationProgramSelected="handleDestinationChanged"
     />
   </section>
 </template>
@@ -28,9 +35,7 @@ export default {
       apiData: {},
       selectedProgram: null,
       destinationProgram: null,
-      ratio: null,
-      transferTime: null,
-      transferTimeUnits: null,
+      transferDetails: null,
       partnerPrograms: [],
     };
   },
@@ -38,17 +43,27 @@ export default {
     // this.fetchData();
   },
   watch: {
-    selectedProgram: function(newValue) {
-      if(newValue) {
+    selectedProgram: function (newValue) {
+      if (newValue) {
         this.fetchPartners();
-    }
-  }
-},
+      }
+    },
+    destinationProgram: function (newValue) {
+      if (this.selectedProgram && this.destinationProgram) {
+        this.fetchTransferDetails();
+      }
+    },
+  },
   methods: {
     handleSelectionChanged(input) {
       this.selectedProgram = input;
 
       // this.fetchData();
+    },
+
+    handleDestinationChanged(input) {
+      this.destinationProgram = input;
+      console.log(this.destinationProgram);
     },
 
     async fetchData() {
@@ -66,7 +81,20 @@ export default {
       if (!this.selectedProgram) return;
       try {
         const data = await getPartnerProgramsById(this.selectedProgram.id);
-        this.partnerPrograms = data.data;
+        this.partnerPrograms = data;
+      } catch (error) {
+        console.error(error);
+      }
+    },
+
+    async fetchTransferDetails() {
+      if (!this.selectedProgram || !this.destinationProgram) return;
+      try {
+        const data = await getTransferRates(
+          this.selectedProgram.id,
+          this.destinationProgram.id
+        );
+        this.transferDetails = data[0];
       } catch (error) {
         console.error(error);
       }
